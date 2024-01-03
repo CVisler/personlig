@@ -1,0 +1,17 @@
+{
+  "name": "my-node-project",
+  "version": "1.0.0",
+  "description": "01",
+  "main": "index.js",
+  "scripts": {
+    "static": "serve -p 5050 static"
+  },
+  "keywords": [
+    "01"
+  ],
+  "author": "visler",
+  "license": "ISC",
+  "dependencies": {
+    "serve": "^14.2.1"
+  }
+}
