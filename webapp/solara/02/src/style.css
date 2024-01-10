@@ -1,0 +1,32 @@
+:root {
+  --font-family: SST W01 Roman,sans-serif,Helvetica Neue,Helvetica,Arial;
+  --background: #F5F7F8;
+  --nav: #495E57;
+  --nav-text-color: #FFECD6;
+  --button: #F4CE14;
+  --head: #45474B;
+}
+
+.v-application .primary {
+  background-color: var(--head) !important;
+}
+
+.v-sheet {
+  background-color: var(--background) !important;
+  font-family: var(--font-family);
+}
+
+.mybutton {
+  background-color: var(--button) !important;
+}
+
+.mycard {
+  background-color: var(--nav) !important;
+  color: var(--nav-text-color) !important;
+}
+
+.v-card .mycard {
+  color: var(--nav-text-color) !important;
+  font-size: 1.5rem;
+  letter-spacing: -.04rem;
+}
