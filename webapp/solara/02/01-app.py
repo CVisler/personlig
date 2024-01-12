@@ -7,21 +7,26 @@ from components.cmp_html import mobile_message
 title = "This is a Sony Nordic Dashboard app - Sony BRAVIA"
 css = Path('02/src/style.css')
 
-@sol.component_vue('components/card.vue')
-def mycard():
+
+@sol.component_vue('components/dashboard-card.vue')
+def dsh_card(labels=['JAN', 'FEB', 'MAR', 'APR', 'MAY'], value=[3, 5, 12, 9, 4], height=150, width=500):
     pass
 
-
+ 
 @sol.component_vue('components/mini-nav.vue')
 def mininav():
     pass
 
 
+@sol.component_vue('components/bottom-nav.vue')
+def bottomnav(color: str="#F5F7F8"):
+    pass
+
+
 @sol.component
 def Second():
-    sol.HTML(tag="h1", unsafe_innerHTML=title)
-    with sol.Link('/'):
-        sol.Button(label='Home', classes=["mx-2 mybutton"])
+    dsh_card()
+    bottomnav()
 
 
 @sol.component
@@ -41,7 +46,7 @@ def Home():
             with sol.Card(title="Card 1", subtitle="Subtitle 1"):
                 sol.Text("This is a card")
         with sol.Row(classes=["mybutton"]):
-            mycard()
+            dsh_card()
         with sol.Card(title="Card title", subtitle="Card subtitle"):
             sol.Markdown(
                 "Lorem ipsum dolor sit amet consectetur adipisicing elit. "\

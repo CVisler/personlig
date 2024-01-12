@@ -10,6 +10,7 @@
 
 .v-application .primary {
   background-color: var(--head) !important;
+  font-family: var(--font-family);
 }
 
 .v-tabs {
@@ -19,6 +20,11 @@
 .v-sheet {
   background-color: var(--background) !important;
   font-family: var(--font-family);
+}
+
+.navcluster {
+  background-color: var(--head) !important;
+  justify-items: right !important;
 }
 
 .mybutton {
