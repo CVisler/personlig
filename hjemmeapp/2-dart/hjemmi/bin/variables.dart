@@ -8,7 +8,7 @@ void main() {
   // String interpolation
   print('My name is $name and I am $age years old and $height meters tall.');
 
-  // Reassigable variables -> like saying idgaf about type here
+  // Reassignable variables -> like saying idgaf about type here
   // Type becomes 'dynamic'. If Dart can infer the type it will e.g. String
   var myAge = 20;
 
@@ -19,5 +19,5 @@ void main() {
   // Value therefore must be known at compile time -> if you have a constant which will change at runtime use final instead
   const double myHeight = 1.80;
   const double myWeight = 80.0;
- // const double myBMI = myWeight / (myHeight * myHeight); // error
+  // const double myBMI = myWeight / (myHeight * myHeight); // error
 }
