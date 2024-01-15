@@ -1,81 +1,63 @@
 import solara as sol
-import numpy as np
-import pandas as pd
-from io import StringIO
-import sys
-sys.path.append('/home/visler/projects/webapp/solara/03/components/')
-from navigation_cluster import clustered_navigation_links
+# import pandas as pd
+from sys import path
+path.append('/home/visler/projects/webapp/solara/03/')
+from components import file_drop
+from components import echarts
+from components import navigation_cluster
 from pathlib import Path
-from solara.components.file_drop import FileInfo
-import textwrap
+# from solara.components.file_drop import FileInfo
+# from io import StringIO
+# import reacton.ipyvuetify as rv # testing validity - so far seems redundant when we have solara components
 
-css = Path('src/style.css')
+css = Path('assets/style.css')
 html = """
 <p>Hello World</p>
 """
 
+""" Import graphs """
+pie = echarts.pandas_df
+line = echarts.line
 
-@sol.component
-def FileDropperBoi():
-    df, set_df = sol.use_state(None)
-    filename, set_filename = sol.use_state("")
 
-    def on_file(file: FileInfo):
-        set_filename(file["name"])
-        f = file["file_obj"]
-        data = f.read()
+@sol.component_vue('../components/nav.vue')
+def vue_nav():
+    pass
 
-        # Assuming the data is in csv format
-        s = str(data, 'utf-8')
-        data = StringIO(s) 
 
-        # Convert the data to a pandas DataFrame
-        df = pd.read_csv(data)
-        set_df(df)
+@sol.component_vue('../components/play.vue')
+def vue_play():
+    pass
 
-    with sol.Div() as main:
-        sol.FileDrop(
-            label="Drag and drop a .csv file here",
-            on_file=on_file,
-            lazy=True,  # We will only read the file when needed
-        )
-        if df is not None:
-            sol.Info(f"File {filename} has been loaded into a DataFrame with {df.shape[0]} rows and {df.shape[1]} columns.")
-            sol.DataFrame(df)
 
-    return main
+# VI SKAL HAVE SÅDAN EN SMART MENU, HVOR MAN KAN VÆLGE/FRAVÆLGE ELEMENTER, SOM F.EKS. HEADERS I DEN FIL, DER BLIVER DROPPET IND
 
 
 @sol.component
 def Home():
     with sol.AppBar():
         sol.Style(css)
-        with sol.Column(align="end"):
-            clustered_navigation_links()
+        with sol.Column(align="end", classes=["quick-links"]):
+            pass
         with sol.Sidebar():
-            sol.HTML(unsafe_innerHTML=html)
-    with sol.ColumnsResponsive():
-        sol.HTML(unsafe_innerHTML=html)
-        FileDropperBoi()
-
+            pass
+    with sol.ColumnsResponsive(6, large=[1, 4, 8]):
+        vue_nav()
+        sol.FigureEcharts(option=pie["trial"])
+        sol.FigureEcharts(option=line["kekkers"])
 
 
 @sol.component
 def TME():
     with sol.AppBar():
         sol.Style(css)
-        with sol.Link('/'):
-            sol.Button(icon_name="mdi-home", classes=["mx-2 mycard"])
-        with sol.Link('/TME'):
-            sol.Button(icon_name="mdi-television", classes=["mx-2 mycard"])
-        with sol.Link('/VSE'):
-            sol.Button(icon_name="mdi-headphones", classes=["mx-2 mycard"])
-        with sol.Link('/DIM'):
-            sol.Button(icon_name="mdi-camera", classes=["mx-2 mycard"])
-        with sol.Link('/MOB'):
-            sol.Button(icon_name="mdi-cellphone", classes=["mx-2 mycard"])
+        with sol.Column(align="end", classes=["quick-links"]):
+            navigation_cluster.quick_links()
         with sol.Sidebar():
-            sol.HTML(unsafe_innerHTML=html)
+            pass
+    with sol.ColumnsResponsive(6, large=[1, 4, 8]):
+        pass
+    vue_play()
 
 
 @sol.component
@@ -83,15 +65,15 @@ def VSE():
     with sol.AppBar():
         sol.Style(css)
         with sol.Link('/'):
-            sol.Button(icon_name="mdi-home", classes=["mx-2 mycard"])
+            sol.Button(icon_name="mdi-home", classes=["mx-2 navs"])
         with sol.Link('/TME'):
-            sol.Button(icon_name="mdi-television", classes=["mx-2 mycard"])
+            sol.Button(icon_name="mdi-television", classes=["mx-2 navs"])
         with sol.Link('/VSE'):
-            sol.Button(icon_name="mdi-headphones", classes=["mx-2 mycard"])
+            sol.Button(icon_name="mdi-headphones", classes=["mx-2 navs"])
         with sol.Link('/DIM'):
-            sol.Button(icon_name="mdi-camera", classes=["mx-2 mycard"])
+            sol.Button(icon_name="mdi-camera", classes=["mx-2 navs"])
         with sol.Link('/MOB'):
-            sol.Button(icon_name="mdi-cellphone", classes=["mx-2 mycard"])
+            sol.Button(icon_name="mdi-cellphone", classes=["mx-2 navs"])
         with sol.Sidebar():
             sol.HTML(unsafe_innerHTML=html)
 
@@ -101,15 +83,15 @@ def DIM():
     with sol.AppBar():
         sol.Style(css)
         with sol.Link('/'):
-            sol.Button(icon_name="mdi-home", classes=["mx-2 mycard"])
+            sol.Button(icon_name="mdi-home", classes=["mx-2 navs"])
         with sol.Link('/TME'):
-            sol.Button(icon_name="mdi-television", classes=["mx-2 mycard"])
+            sol.Button(icon_name="mdi-television", classes=["mx-2 navs"])
         with sol.Link('/VSE'):
-            sol.Button(icon_name="mdi-headphones", classes=["mx-2 mycard"])
+            sol.Button(icon_name="mdi-headphones", classes=["mx-2 navs"])
         with sol.Link('/DIM'):
-            sol.Button(icon_name="mdi-camera", classes=["mx-2 mycard"])
+            sol.Button(icon_name="mdi-camera", classes=["mx-2 navs"])
         with sol.Link('/MOB'):
-            sol.Button(icon_name="mdi-cellphone", classes=["mx-2 mycard"])
+            sol.Button(icon_name="mdi-cellphone", classes=["mx-2 navs"])
         with sol.Sidebar():
             sol.HTML(unsafe_innerHTML=html)
 
@@ -119,29 +101,23 @@ def MOB():
     with sol.AppBar():
         sol.Style(css)
         with sol.Link('/'):
-            sol.Button(icon_name="mdi-home", classes=["mx-2 mycard"])
+            sol.Button(icon_name="mdi-home", classes=["mx-2 navs"])
         with sol.Link('/TME'):
-            sol.Button(icon_name="mdi-television", classes=["mx-2 mycard"])
+            sol.Button(icon_name="mdi-television", classes=["mx-2 navs"])
         with sol.Link('/VSE'):
-            sol.Button(icon_name="mdi-headphones", classes=["mx-2 mycard"])
+            sol.Button(icon_name="mdi-headphones", classes=["mx-2 navs"])
         with sol.Link('/DIM'):
-            sol.Button(icon_name="mdi-camera", classes=["mx-2 mycard"])
+            sol.Button(icon_name="mdi-camera", classes=["mx-2 navs"])
         with sol.Link('/MOB'):
-            sol.Button(icon_name="mdi-cellphone", classes=["mx-2 mycard"])
+            sol.Button(icon_name="mdi-cellphone", classes=["mx-2 navs"])
         with sol.Sidebar():
             sol.HTML(unsafe_innerHTML=html)
 
 
 
 
-# @sol.component
-# def Page():
-#     Home()
-#     VSE()
-
-
 routes = [
-    sol.Route(path="", component=Home, label="HOME"),
+    sol.Route(path="", component=Home, label="HOME - SONY BRAVIA"),
     sol.Route(path="VSE", component=VSE, label="VIDEO AND SOUND"),
     sol.Route(path="TME", component=TME, label="TV"),
     sol.Route(path="DIM", component=DIM, label="DIGITAL IMAGING"),

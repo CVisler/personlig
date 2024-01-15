@@ -7,11 +7,18 @@
   --head: #45474B;
 }
 
+.v-toolbar__title {
+  font-family: var(--font-family);
+  font-size: 2.5rem;
+}
 
 .v-application .primary {
   background-color: var(--head) !important;
   font-family: var(--font-family);
+  font-weight: 100;
+  letter-spacing: -.04rem;
 }
+
 
 .v-tabs {
   display: none !important;
@@ -22,22 +29,33 @@
   font-family: var(--font-family);
 }
 
-.navcluster {
+/* currently deprecated */
+.quick-links {
   background-color: var(--head) !important;
-  justify-items: right !important;
+}
+
+.quick-btns {
+  background-color: var(--nav) !important;
+  color: var(--nav-text-color) !important;
+}
+/* currently deprecated */
+
+.main-nav-btn {
+  background-color: var(--nav) !important;
 }
 
 .mybutton {
   background-color: var(--button) !important;
 }
 
-.mycard {
-  background-color: var(--nav) !important;
-  color: var(--nav-text-color) !important;
-}
 
-.v-card .mycard {
-  color: var(--nav-text-color) !important;
+.v-card .navs {
+  color: var(--navt-color) !important;
   font-size: 1.5rem;
   letter-spacing: -.04rem;
+}
+
+
+.TESTER {
+  background-color: var(--background) !important;
 }
