@@ -135,9 +135,9 @@ udgifter = {
     },
 }
 
-# TODO: Udvikling af udgifter og indtægter over tid
+# TODO: Udvikling af udgifter. Ingen idéer endnu
 def udvikling():
-    """Udvikling af udgifter og indtægter over tid"""
+    """Udvikling af udgifter over tid"""
     pass
 
 
@@ -211,7 +211,8 @@ def tilskrivelse_mnd(l: float, r: float=RENTE, a: float=AFDRAG) -> float:
 
 
 def simuler(f: float=FORMUE, luft: float=LUFT_PR_MÅNED, l: float=LÅN, r: float=RENTE, a: float=AFDRAG, udv_pa: float=0.00) -> tuple[int, float, float]:
-    """Tager lån og nøgletal og returnerer total løbetid, sammenlagt afdrag, og sammenlagt formue ultimo
+    """
+    #### Tager lån og nøgletal og returnerer total løbetid, sammenlagt afdrag, og sammenlagt formue ultimo
     ---
     * f: formue
     * luft: luft pr måned
@@ -223,7 +224,6 @@ def simuler(f: float=FORMUE, luft: float=LUFT_PR_MÅNED, l: float=LÅN, r: float
     # Tjek at input er korrekt format
     if not all(isinstance(i, float) for i in [f, luft, l, r, a, udv_pa]):
         exit('Format skal være decimaltal')
-    formue = f
     laan = l
     rente = r
     afdrag = a 
@@ -232,7 +232,7 @@ def simuler(f: float=FORMUE, luft: float=LUFT_PR_MÅNED, l: float=LÅN, r: float
     luft = luft if a == AFDRAG else ( luft + ( AFDRAG - a ) )
     count_maaned = 0
     afdrag_ttl = 0
-    formue_ttl = formue # Giver mening når der er tilføjet error handling
+    formue_ttl = f
     while laan < 0:
         count_maaned += 1
         if count_maaned % 12 == 0:
