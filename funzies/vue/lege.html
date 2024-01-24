@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Vue 3 playground</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style> 
+    [v-cloak] {
+      display: none;
+    }
+    div{}
+      background-color: red;
+    }
+    </style>
+  </head>
+  <body>
+    <div id="app" v-cloak>
+
+      <combobox></combobox>
+
+    </div>
+
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+    const app = Vue.createApp{
+      data: function() {
+      return {
+      }
+      },
+    })
+
+    app.component('combobox', {
+      template: `
+  <div class="text-center">
+    <v-chip
+      v-if="chip"
+      class="ma-2"
+      closable
+      @click:close="chip = false"
+    >
+      Closable
+    </v-chip>
+  </div>
+`
+    })
+    app.mount('#app')
+    </script>
+
+  </body>
+</html>

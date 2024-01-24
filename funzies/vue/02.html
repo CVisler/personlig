@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Vue 3 playground</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style> 
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: red;
+    }
+    [v-cloak] {
+      display: none;
+    }
+    input {
+      display: block;
+      margin-bottom: 10px;
+    }
+    </style>
+  </head>
+  <body>
+    <div id="app" v-cloak>
+      <login-form></login-form>
+
+        <!-- click = event - events have modifiers like 'prevent' -->
+
+    </div>
+
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+    // This is called the options object
+    // It can be considered as its own component
+    const app = Vue.createApp({
+      data: function() {
+        return {
+        }
+      },
+      methods: {
+        toggleBox() {
+          this.isVisible = !this.isVisible
+        },
+      }
+    })
+
+    // Takes two arguments: name of the component and the options object
+    // If the options object is already defined
+    app.component('login-form', {
+      template: 
+      // Prevent will prevent default behaviour
+      // v-bind turns the regular html attribute into something that can be parsed as javascript - now a variable can be passed into the child component
+      // the emailLabel variable will get passed down to the label
+      // v-bind: shorthand is just to use :
+      // v-model, under the hood, is giving us a prop called modelValue, while listening for the update event from the child
+              `
+        <h1>{{ title }}</h1>
+          <form @submit.prevent="handleSubmit" class="login-form">
+            <custom-input v-model="userEmail" placeholder="Email" :label="emailLabel"/>
+            <custom-input v-model="userPassword" placeholder="Password" v-bind:label="passwordLabel" />
+            <button>Submit</button>
+          </form> `,
+      components: ['custom-input'],
+      // noteworthy that the variables in the parent option are immutable for the child component; needs to be update from the same component
+      // essentially props are read-only for the child, so they need to $emit them back to the parent
+      data() {
+        return {
+          title: 'Login form',
+          userEmail: 'default email',
+          userPassword: 'default password',
+          emailLabel: 'Email',
+          passwordLabel: 'Password'
+        }
+      },
+      methods: {
+        handleSubmit() {
+          console.log('Form submitted')
+          console.log(this.userEmail)
+          console.log(this.userPassword)
+        }
+      }
+    })
+
+    // Child component - needs to receive the property label with the props object
+    // props is basically a list of elements that can be passed from the parent component to the child component
+    app.component('custom-input', {
+    template: `
+      <label>
+        {{ label }}
+        <input type="text" v-model="inputValue">
+      </label>
+      `,
+      // modelValue is the value that is passed down from the parent component
+      props: ['label', 'modelValue'],
+      // We will use the computed object to transmit data from the child to the parent
+      // with computed we can set variables which will act as key-value pairs; can then be used as getters and setters
+      computed: {
+        inputValue: {
+          get() {
+            return this.modelValue
+          },
+          set (value) {
+            // $emit 'emits' events that other components can listen to
+            // We will use the update event to set the value of the modelValue
+            this.$emit('update:modelValue', value)
+          }
+        }
+      },
+      data() {
+          return {
+          }
+      }
+    })
+
+    app.mount('#app')
+    </script>
+
+  </body>
+</html>

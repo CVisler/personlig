@@ -29,7 +29,6 @@
   font-family: var(--font-family);
 }
 
-/* currently deprecated */
 .quick-links {
   background-color: var(--head) !important;
 }
@@ -38,7 +37,6 @@
   background-color: var(--nav) !important;
   color: var(--nav-text-color) !important;
 }
-/* currently deprecated */
 
 .main-nav-btn {
   background-color: var(--nav) !important;

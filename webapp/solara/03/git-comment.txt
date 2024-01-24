@@ -1,1 +1,1 @@
-fixed rltv imports, added echarts, set up vue nav, scsful pandas->echart trial
+"impl: nav component"

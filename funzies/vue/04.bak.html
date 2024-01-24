@@ -4,32 +4,41 @@
     <title>Vue 3 playground</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="css/style.css" rel="stylesheet">
+    <style> 
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: red;
+    }
+    [v-cloak] {
+      display: none;
+    }
+    input {
+      display: block;
+      margin-bottom: 10px;
+    }
+    </style>
   </head>
   <body>
-    <div id="app">
-      <h1>{{ title }}</h1>
-      <h2>{{ subtitle }}</h3>
-      <p>{{ message }}</p>
-        <input placeholder="Name" type="text" v-model="user_name">
+    <div id="app" v-cloak>
 
-          <hr>
+      <login-form></login-form>
 
     </div>
 
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
-    // This is called the options object
+    // Lifecycle hooks; a hook is a function that will be triggered to run at a specific time in the lifecycle of a component
     const app = Vue.createApp({
       data: function() {
         return {
-          title: 'Vue 3 playground',
-          subtitle: "Let's create some input and some state",
-          message: 'Input your name below:'
         }
+      },
+      methods: {
       }
     })
+
     app.mount('#app')
     </script>
 

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Vue 3 playground</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style media="screen"> .box { width: 200px; height: 200px; background: red; color: white; } </style>
+  </head>
+  <body>
+    <div id="app" v-cloak>
+      <!-- <h1>{{ title }}</h1> -->
+      <!-- <h2>{{ subtitle }}</h2> -->
+      <!-- <p>{{ message }}</p> -->
+      <!-- <input @keyup.enter="greet(inputName)" placeholder="Name" type="text" v-model="inputName"> -->
+      <!---->
+      <!-- <hr> -->
+      <!---->
+      <button @click="toggleBox">Toggle box</button>
+      <test-box v-if="isVisible" />
+
+    </div>
+
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+    // This is called the options object
+    const app = Vue.createApp({
+      data: function() {
+        return {
+          inputName: '',
+          isVisible: false,
+          title: 'Vue 3 playground',
+          subtitle: "Let's create some input and some state",
+          message: 'Input your name below:',
+          userName: '',
+        }
+      },
+      methods: {
+        toggleBox() {
+          this.isVisible = !this.isVisible
+        }
+      }
+    })
+
+    // Lifecycle hooks; a hook is a function that will be triggered to run at a specific time in the lifecycle of a component
+    app.component('test-box', {
+      template: `<div class="box"></div>`,
+      created() {
+        console.log('created')
+      },
+      mounted() {
+        console.log('mounted')
+      },
+      unmounted() {
+        console.log('unmounted')
+      },
+    })
+    app.mount('#app')
+    </script>
+
+  </body>
+</html>

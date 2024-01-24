@@ -8,7 +8,7 @@ def quick_links():
         with sol.Link('/TME'):
             sol.Button(icon_name="mdi-television", classes=["mx-2 quick-btns"])
         with sol.Link('/VSE'):
-            sol.Button(icon_name="mdi-headphones", classes=["mx-2 quick-btns"])
+            sol.Button(icon_name="mdi-speaker", classes=["mx-2 quick-btns"])
         with sol.Link('/DIM'):
             sol.Button(icon_name="mdi-camera", classes=["mx-2 quick-btns"])
         with sol.Link('/MOB'):

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Vue 3 playground</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style> 
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: red;
+    }
+    [v-cloak] {
+      display: none;
+    }
+    input {
+      display: block;
+      margin-bottom: 10px;
+    }
+    </style>
+  </head>
+  <body>
+    <div id="app" v-cloak>
+
+      <login-form></login-form>
+
+    </div>
+
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+    const app = Vue.createApp({
+      data: function() {
+        return {
+        }
+      },
+      methods: {
+        toggleBox() {
+          this.isVisible = !this.isVisible
+        },
+      }
+    })
+
+    app.component('login-form', {
+      template: 
+      // key is like the i in the loop, 'itr' is the iterable, and we can get the index by "(itr, index) in demoList"
+              `
+          <form @submit.prevent="handleSubmit" class="login-form">
+            <h1>{{ title }}</h1>
+            <!-- <p v-for="itr in demoList" :key="itr"> {{ itr }} </p> -->
+            <custom-input
+              v-for="(input, i) in inputs"
+              :key="i"
+              v-model="input.value"
+              :label="input.label"
+              :type="input.type"
+            </custom-input>
+            <button>Submit</button>
+          </form> `,
+      components: ['custom-input'],
+      data() {
+        return {
+          title: 'Login form',
+          // To handle loops we need an array of objects
+          demoList: [
+            'item 1',
+            'item 2',
+            'item 3',
+          ],
+          inputs: [
+            {
+              label: 'Email',
+              value: '',
+              type: 'email',
+            },
+            {
+              label: 'Password',
+              value: '',
+              type: 'password',
+            }
+          ],
+        }
+      },
+      methods: {
+        handleSubmit() {
+          console.log(this.inputs[0].value, this.inputs[1].value)
+        }
+      }
+    })
+
+    app.component('custom-input', {
+    template: `
+      <label>
+        {{ label }}
+        <input :type="type" v-model="inputValue">
+      </label>
+      `,
+      props: ['label', 'type', 'modelValue'],
+      computed: {
+        inputValue: {
+          get() {
+            return this.modelValue
+          },
+          set (value) {
+            this.$emit('update:modelValue', value)
+          }
+        }
+      },
+      // data() {
+      //     return {
+      //     }
+      // }
+    })
+
+    app.mount('#app')
+    </script>
+
+  </body>
+</html>

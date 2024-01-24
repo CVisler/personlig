@@ -7,6 +7,7 @@
       >
         <v-btn 
           class="main-nav-btn"
+          top
           dark
           @click.stop="drawer = !drawer"
         >
