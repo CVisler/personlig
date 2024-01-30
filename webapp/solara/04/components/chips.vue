@@ -4,26 +4,25 @@
     :items="items"
     chips
     clearable
-    label="Your favorite hobbies"
+    label="Select columns"
     multiple
     prepend-icon="mdi-filter-variant"
-    variant="solo"
+    solo
+    @change="log"
   >
     <template v-slot:selection="{ attrs, item, select, selected }">
       <v-chip
         v-bind="attrs"
-        :model-value="selected"
-        closable
+        :input-value="selected"
+        close
         @click="select"
         @click:close="remove(item)"
       >
-        <strong>{{ item }}</strong>&nbsp;
-        <span>(interest)</span>
+        <strong>{{ item }}</strong> 
       </v-chip>
     </template>
   </v-combobox>
 </template>
-
 <script>
   export default {
     data () {
@@ -36,6 +35,10 @@
     methods: {
       remove (item) {
         this.chips.splice(this.chips.indexOf(item), 1)
+      },
+      log (item) {
+        let element = document.getElementsByClassName('yoink')
+        element[0].innerHTML = item
       },
     },
   }
