@@ -1,19 +1,64 @@
 from pydantic import field_validator, BaseModel, Field
 from pydantic.dataclasses import dataclass
-import dataclasses
+# from xlwings import Book
+# import dataclasses
 from enum import StrEnum
-from typing import Optional, List
+from typing import Optional, List, TypedDict
 
-def_ym = ['202312', '202411', 202412, '202301', '202302', '202303', '202304', '202305', '202306', '202307', '202308', '202309', '202310', '202311']
+
+class SnordTables(StrEnum):
+    ACTUALS = 'actuals'
+    SST = 'sst'
+
 
 class PeriodDef(StrEnum):
     year_month = 'year_month'
     year_week = 'year_week'
 
+
+class SQLTableContent(TypedDict):
+    alias: str
+    period: list[str] # Why is this a list of strings? Because the sony_calendar() is set up to return strings I believe
+    period_def: PeriodDef
+    period_tech_name: list[int]
+    new_cols: list[str]
+
+
+class SQLMetaData(TypedDict):
+    SnordTables.ACTUALS: SQLTableContent
+    SnordTables.SST: SQLTableContent
+
+
+SQL_META_DATA: SQLMetaData = {
+    SnordTables.ACTUALS: {
+        'alias': 'DS_1',
+        'period': ['202402', '202403', '202404'],
+        'period_def': PeriodDef.year_month,
+        'period_tech_name': ['S_FYPOPT'],
+        'new_cols': ['DATE', 'CUSTOMER', 'MATERIAL', 'QUANTITY', 'P3B_1', 'P3B', 'P5', 'MP'],
+    },
+    SnordTables.SST: {
+        'alias': 'DS_3',
+        'period': ['202422', '202423', '202424'],
+        'period_def': PeriodDef.year_week,
+        'period_tech_name': ['S_CALWK_MS'],
+        'new_cols': ['DATE', 'CUSTOMER', 'EXT_ID', 'MATERIAL', 'SELLOUT', 'STOCK'],
+    }
+}
+
+
 @dataclass(kw_only=True, slots=True)
 class PeriodType:
-    ym: Optional[List[int]] = Field(examples=[202403, 202404], default=None)
-    yw: Optional[List[int]] = Field(examples=[202333, 202334], default=None)
+    ym: Optional[list[int]] = Field(
+        kw_only=True,
+        max_length=12,
+        examples=[202403, 202404],
+        default=None)
+    yw: Optional[list[int]] = Field(
+        kw_only=True,
+        max_length=12,
+        examples=[202333, 202334],
+        default=None)
 
     @field_validator('ym')
     @classmethod
@@ -47,23 +92,82 @@ class PeriodType:
             return v
         return [_test_ix(i) for i in v]
 
-class Procedure(BaseModel):
-    period_def: PeriodDef = Field(default=None)
-    period: PeriodType = Field(default_factory=PeriodType, validate_default=True)
+
+class Process(BaseModel):
+    """ One process should be instantiated for each SAP alias to update.
+    ---
+    WoW: create an instance representation of the SQL table you wish to update by providing table name and period.
+    """
+    table: SnordTables = Field(...,
+                            title='Table to update',
+                            examples=[SnordTables.ACTUALS],)
+
+    alias: str = Field(title='SAP alias',
+                       default=None,)
+
+    period: PeriodType = Field(default_factory=PeriodType,
+                            title='Period to update',
+                            description='year_month or year_week',
+                            examples={
+                                'ym': [202303, 202304], 'yw': [202333, 202334]
+                            },)
+
+    period_def: PeriodDef = Field(default=None,
+                                title='Period definition',
+                                description='year_month or year_week',
+                                examples=[PeriodDef.year_month, PeriodDef.year_week],)
+
+    period_tech_name: list[str] = Field(description='SAP technical name for the period',
+                                        default=None,)
+
+    new_cols: list[str] = Field(title='New columns',
+                                description='Representative of the columns as they need to go into SQL',
+                                default=None,)
 
 
     def model_post_init(self, __context: any) -> None:
-        if self.period.ym:
-            self.period_def = PeriodDef.year_month
-        elif self.period.yw:
+        """ Assigns all necessary attributes needed for full update from BW all the way to SQL """
+
+        if self.period.yw:
             self.period_def = PeriodDef.year_week
+        elif self.period.ym:
+            self.period_def = PeriodDef.year_month
+
+        self.alias = SQL_META_DATA[self.table]['alias']
+
+        self.period_tech_name = SQL_META_DATA[self.table]['period_tech_name']
+
+        self.new_cols = SQL_META_DATA[self.table]['new_cols']
 
 
-procedure = Procedure(
-    period_def=PeriodDef.year_month,
-    period=PeriodType(
-        yw=def_ym,
+    # TODO: Consider if particular methods of the class should be called depending on the table and thus the settings required to manipulate the period
+    # i.e. if we need first and last slice of a dot-fiscal year or something like that
+
+    def update(self):
+        """ Begin the update process """
+        print(f'\nUpdating... {self.table}', end='\n\n')
+
+
+    def display(self):
+        print(self.model_dump_json(indent=4))
+
+
+if __name__ == '__main__':
+    process_actuals = Process(
+        table=SnordTables.ACTUALS,
+        period=PeriodType(
+            ym=SQL_META_DATA[SnordTables.ACTUALS]['period']
+        ),
     )
-)
-print(procedure.model_dump_json(indent=4))
-print(procedure.model_dump())
+    process_sst = Process(
+        table=SnordTables.SST,
+        period=PeriodType(
+            yw=SQL_META_DATA[SnordTables.SST]['period']
+        ),
+    )
+
+    process_actuals.update()
+    process_actuals.display()
+
+    process_sst.update()
+    process_sst.display()
