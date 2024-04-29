@@ -1,7 +1,5 @@
 from pydantic import field_validator, BaseModel, Field
 from pydantic.dataclasses import dataclass
-# from xlwings import Book
-# import dataclasses
 from enum import StrEnum
 from typing import Optional, List, TypedDict
 
@@ -20,7 +18,7 @@ class SQLTableContent(TypedDict):
     alias: str
     period: list[str] # Why is this a list of strings? Because the sony_calendar() is set up to return strings I believe
     period_def: PeriodDef
-    period_tech_name: list[int]
+    period_tech_name: list[str]
     new_cols: list[str]
 
 
@@ -101,25 +99,20 @@ class Process(BaseModel):
     table: SnordTables = Field(...,
                             title='Table to update',
                             examples=[SnordTables.ACTUALS],)
-
     alias: str = Field(title='SAP alias',
                        default=None,)
-
     period: PeriodType = Field(default_factory=PeriodType,
                             title='Period to update',
                             description='year_month or year_week',
                             examples={
                                 'ym': [202303, 202304], 'yw': [202333, 202334]
                             },)
-
     period_def: PeriodDef = Field(default=None,
                                 title='Period definition',
                                 description='year_month or year_week',
                                 examples=[PeriodDef.year_month, PeriodDef.year_week],)
-
     period_tech_name: list[str] = Field(description='SAP technical name for the period',
                                         default=None,)
-
     new_cols: list[str] = Field(title='New columns',
                                 description='Representative of the columns as they need to go into SQL',
                                 default=None,)
@@ -128,10 +121,17 @@ class Process(BaseModel):
     def model_post_init(self, __context: any) -> None:
         """ Assigns all necessary attributes needed for full update from BW all the way to SQL """
 
-        if self.period.yw:
-            self.period_def = PeriodDef.year_week
-        elif self.period.ym:
-            self.period_def = PeriodDef.year_month
+        if not all([self.period.yw, self.period.ym]):
+            if SQL_META_DATA[self.table]['period_def'] == PeriodDef.year_month:
+                self.period_def = PeriodDef.year_month
+                self.period = PeriodType(
+                    ym = SQL_META_DATA[self.table]['period']
+                )
+            else:
+                self.period_def = PeriodDef.year_week
+                self.period = PeriodType(
+                    yw = SQL_META_DATA[self.table]['period']
+                )
 
         self.alias = SQL_META_DATA[self.table]['alias']
 
@@ -142,6 +142,11 @@ class Process(BaseModel):
 
     # TODO: Consider if particular methods of the class should be called depending on the table and thus the settings required to manipulate the period
     # i.e. if we need first and last slice of a dot-fiscal year or something like that
+    #
+    # TODO: What meta data is needed to be able to update the table? 
+    # [ fiscal-year ]
+    # [ dot-year ]
+    # [ orders ]
 
     def update(self):
         """ Begin the update process """
@@ -149,25 +154,18 @@ class Process(BaseModel):
 
 
     def display(self):
-        print(self.model_dump_json(indent=4))
+        print(
+            self.model_dump_json(indent=4)
+        )
 
 
 if __name__ == '__main__':
     process_actuals = Process(
-        table=SnordTables.ACTUALS,
-        period=PeriodType(
-            ym=SQL_META_DATA[SnordTables.ACTUALS]['period']
-        ),
-    )
-    process_sst = Process(
-        table=SnordTables.SST,
-        period=PeriodType(
-            yw=SQL_META_DATA[SnordTables.SST]['period']
-        ),
+        table='actuals',
+        # period=PeriodType(
+        #     ym=SQL_META_DATA[SnordTables.ACTUALS]['period']
+        # ),
     )
 
     process_actuals.update()
     process_actuals.display()
-
-    process_sst.update()
-    process_sst.display()
