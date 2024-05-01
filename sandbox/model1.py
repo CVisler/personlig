@@ -30,6 +30,8 @@ class SQLTableContent(TypedDict):
     alias: str
     period: list[str] # Why is this a list of strings? Because the sony_calendar() is set up to return strings I believe
     period_type: PeriodType
+    period_def: PeriodDef
+    period_sap: PeriodSap
     period_tech_name: list[str]
     new_cols: list[str]
 
@@ -177,7 +179,10 @@ class Runner(BaseModel):
     def model_post_init(self, __context: any) -> None:
         # TODO: Doesn't handle multiple instances yet
         if self.period_override:
-            self.instance.period = self.period_override
+            if isinstance(self.instance, list):
+                for inst in self.instance:
+                    inst.period = self.period_override
+                self.instance.period = self.period_override
 
 
     def execute(self):
@@ -195,14 +200,15 @@ class Runner(BaseModel):
 
     def _run_mult(self):
         print('Running multiple instances')
-        print(self.instance.model_dump_json(indent=2))
+        for inst in self.instance:
+            print(inst.model_dump_json(indent=2))
 
 
 if __name__ == '__main__':
 
     m = Runner(
         # period_override=Period(ym=[202001]),
-        instance={ 'table': 'actuals'},
+        instance={'table': 'actuals'},
     )
 
 
