@@ -1,0 +1,8 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =6
+let g:netrw_dirhist_6='/home/farmand/.config/mutt'
+let g:netrw_dirhist_5='/home/farmand/personlig/webapp/solara/05/components'
+let g:netrw_dirhist_4='/home/farmand'
+let g:netrw_dirhist_3='/home/farmand/personlig/funzies'
+let g:netrw_dirhist_2='/home/farmand/personlig/funzies/bash'
+let g:netrw_dirhist_1='/home/farmand/personlig/funzies'
