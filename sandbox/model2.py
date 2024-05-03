@@ -1,6 +1,7 @@
-from pydantic import field_validator, BaseModel, Field, computed_field
+from pydantic import field_validator, BaseModel, Field, ValidationError, model_validator, AfterValidator
 from enum import StrEnum, member
 from typing import Optional, List, TypedDict
+from typing_extensions import Annotated
 
 
 class SnordTables(StrEnum):
@@ -8,7 +9,7 @@ class SnordTables(StrEnum):
     SST = 'sst'
 
 
-class Period(str):
+class Period:
     class Type(StrEnum):
         year_month = 'year_month'
         year_week = 'year_week'
@@ -24,7 +25,7 @@ class Period(str):
 
 class SQLTableContent(TypedDict):
     alias: list[str]
-    period: list[str] # Why is this a list of strings? Because the sony_calendar() is set up to return strings I believe
+    period: list[str]
     period_type: Period.Type
     period_def: Period.Def
     period_sap: Period.Sap
@@ -58,42 +59,63 @@ SQL_META_DATA: SQLMetaData = {
     },
 }
 
-class Model(BaseModel):
-    table: SnordTables
-    period: Optional[int | list[int]] = Field(default=None,
-                                            ge=201001,
-                                            le=202653,
-                                            title="Periods to include")
+# _period = Annotated[int, AfterValidator]
 
+class Model(BaseModel):
+    table: SnordTables = Field(..., title="Table name", description="Assigns all the table's attributes based off table name")
+    period_type: Optional[Period.Type] = None
+    period: Optional[int | list[int]] = None
     class Config:
         extra = 'forbid'
         validate_assignment = True
 
 
-    @field_validator('table')
-    def validate_table(cls, v):
-        if v not in SQL_META_DATA:
-            raise ValueError(f"Table {v} not found in SQL_META_DATA")
-        return v
+    # Override the initializor to set the period type
+    def __init__(self, **data):
+        super().__init__(**data)
+        self.period_type = SQL_META_DATA[self.table]['period_type']
+        self.period = SQL_META_DATA[self.table]['period'] if self.period is None else self.period
 
 
-    @computed_field
-    @property
-    def period_type(self) -> Period.Type:
-        return SQL_META_DATA[self.table]['period_type']
+    @model_validator(mode='after')
+    def validate_period(self):
+        if isinstance(self.period, list):
+            for p in self.period:
+                s = str(p)
+                if len(s) != 6:
+                    raise ValueError(f"{s} must be six digits long, got {len(s)}")
+                if int(s[:4]) not in range(2010, 2031):
+                    raise ValueError(f"{self.period_type} is not an acceptable year")
+                if self.period_type == Period.Type.year_month:
+                    if int(s[-2:]) not in range(1, 13):
+                        raise ValueError(f"{self.period_type} is not an acceptable month interval")
+                elif self.period_type == Period.Type.year_week:
+                    if int(s[-2:]) not in range(1, 54):
+                        raise ValueError(f"{self.period_type} is not an acceptable week interval")
+                return self
+
+        else:
+            s = str(self.period)
+            if len(s) != 6:
+                raise ValueError(f"{s} must be six digits long, got {len(s)}")
+            if int(s[:4]) not in range(2010, 2031):
+                raise ValueError(f"{self.period_type} is not an acceptable year")
+            if self.period_type == Period.Type.year_month:
+                if int(s[-2:]) not in range(1, 13):
+                    raise ValueError(f"{self.period_type} is not an acceptable month interval")
+            elif self.period_type == Period.Type.year_week:
+                if int(s[-2:]) not in range(1, 54):
+                    raise ValueError(f"{self.period_type} is not an acceptable week interval")
+            return self
 
 
-    @field_validator('period')
-    def validate_period(cls, v):
-        __v = str(v)
-        if int(__v[-2:]) not in range(1, 54):
-            raise ValueError(f"Period {v} not found in SQL_META_DATA")
-        return v
-
-
-print(
-    Model(
-        table='sst',
-        period='202453'
-    ).dict()
-)
+# TODO: Default value is a list but is not recognized as such by the inner validator
+try:
+    print(
+        Model(
+            table='actuals',
+            period=['202411', '202310', '202202']
+        ).model_dump_json(indent=2)
+    )
+except ValidationError as e:
+    print(e.json(indent=2))
