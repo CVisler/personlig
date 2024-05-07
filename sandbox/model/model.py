@@ -1,19 +1,20 @@
 from pydantic import (
     field_validator,
-    computed_field,
-    model_validator,
     BaseModel,
     Field,
     ValidationError,
-    AfterValidator,
+    ConfigDict,
 )
-from validators import test_month, test_week, month_, week_
+from model_validators import month_, week_
 from metadata import SQL_META_DATA as META
-from enums import SnordTable, Period
-from typing import List
+from enums import Period
+from typing import List, Any, Literal
+
+import sony as s
+from sony import calyear_fiscyear as _conv, dotyear as _dot, sony_calendar as sc
 
 
-class ValidatedPeriod(BaseModel):
+class Vp(BaseModel):
     month: List[month_] = Field(
         kw_only=True,
         max_length=12, # Max list length
@@ -38,7 +39,8 @@ class ValidatedPeriod(BaseModel):
 
 
 class Inst(BaseModel):
-    table: SnordTable = Field(...,
+    model_config = ConfigDict(use_enum_values=True)
+    table: str = Field(...,
                               examples=['actuals', 'sst'],)
     period: List[month_ | week_] | None = None
     period_type: Period.Type | None = None
@@ -48,27 +50,27 @@ class Inst(BaseModel):
     new_cols: List[str] | None = None
 
 
-    def model_post_init(self, __context: any) -> None:
+    def model_post_init(self, __context: Any) -> None:
         if not self.period:
-            self.period = META[self.table.value]['period']
-        self.period_type = META[self.table.value]['period_type']
-        self.period_def = META[self.table.value]['period_def']
-        self.period_sap = META[self.table.value]['period_sap']
-        self.period_tech_name = META[self.table.value]['period_tech_name']
-        self.new_cols = META[self.table.value]['new_cols']
+            self.period = META[self.table]['period']
+        self.period_type = META[self.table]['period_type']
+        self.period_def = META[self.table]['period_def']
+        self.period_sap = META[self.table]['period_sap']
+        self.period_tech_name = META[self.table]['period_tech_name']
+        self.new_cols = META[self.table]['new_cols']
 
 
-if __name__ == "__main__":
-    try:
-        prd = ValidatedPeriod(
-            month=202202,
-        )
-
-        model = Inst(
-            table='actuals',
-            period=prd.month,
-        )
-
-        print( model.model_dump_json(indent=2))
-    except ValidationError as e:
-        print(e.json(indent=2))
+# if __name__ == "__main__":
+#     try:
+#         prd = Vp(
+#             month=[ 202202 ],
+#         )
+#
+#         model = Inst(
+#             table='actuals',
+#             period=prd.month,
+#         )
+#
+#         print( model.model_dump_json(indent=2))
+#     except ValidationError as e:
+#         print(e.json(indent=2))

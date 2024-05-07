@@ -15,5 +15,5 @@ class Period:
 
 
 class SnordTable(StrEnum):
-    ACTUALS = 'actuals'
-    SST = 'sst'
+    actuals = 'actuals'
+    sst = 'sst'
