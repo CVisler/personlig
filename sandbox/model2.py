@@ -59,12 +59,11 @@ SQL_META_DATA: SQLMetaData = {
     },
 }
 
-# _period = Annotated[int, AfterValidator]
 
 class Model(BaseModel):
     table: SnordTables = Field(..., title="Table name", description="Assigns all the table's attributes based off table name")
-    period_type: Optional[Period.Type] = None
-    period: Optional[int | list[int]] = None
+    period_type: Optional[Period.Type] = Period.Type.year_month
+    period: Optional[int | list[int]] = 0
     class Config:
         extra = 'forbid'
         validate_assignment = True
@@ -74,7 +73,7 @@ class Model(BaseModel):
     def __init__(self, **data):
         super().__init__(**data)
         self.period_type = SQL_META_DATA[self.table]['period_type']
-        self.period = SQL_META_DATA[self.table]['period'] if self.period is None else self.period
+        self.period = SQL_META_DATA[self.table]['period'] if self.period == 0 else self.period
 
 
     @model_validator(mode='after')
@@ -110,12 +109,13 @@ class Model(BaseModel):
 
 
 # TODO: Default value is a list but is not recognized as such by the inner validator
-try:
-    print(
-        Model(
-            table='actuals',
-            period=['202411', '202310', '202202']
-        ).model_dump_json(indent=2)
-    )
-except ValidationError as e:
-    print(e.json(indent=2))
+if __name__ == '__main__':
+    try:
+        print(
+            Model(
+                table='actuals',
+                # period=['202411', '202310', '202202']
+            ).model_dump_json(indent=2)
+        )
+    except ValidationError as e:
+        print(e.json(indent=2))
