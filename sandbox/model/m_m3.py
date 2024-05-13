@@ -6,6 +6,7 @@ from pydantic import (
     ConfigDict,
     ValidationInfo,
     ValidationError,
+    BeforeValidator,
 )
 from model_validators import month_, week_, month_dot, week_dot
 from metadata import SQL_META_DATA as META
@@ -16,10 +17,15 @@ from typing import List, Any, Sequence, Annotated
 
 
 class Init(BaseModel):
-    # model_config = ConfigDict(use_enum_values=True, validate_default=True)
+    """
+    Initializes the model with the necessary parameters for the SQL query.
+    Only required field is the table name. Period can optionally be passed as a list of integers - model will attempt to coerce if anything else is passed.
+
+    """
+    model_config = ConfigDict(use_enum_values=True, validate_default=True)
 
     table: SnordTable | str
-    period: List[month_ | week_ | None] | None = None
+    period: Annotated[List[month_ | week_], BeforeValidator(lambda v: [v] if not isinstance(v, list) else v)] = [202403, 202404, 202405] # Convert user input to list if it isnt alread
     period_type: Period.Type | None = None
     period_def: Period.Def | None = None
     period_sap: Period.Sap | None = None
@@ -27,41 +33,20 @@ class Init(BaseModel):
     new_cols: List[str] | None = None
 
 
-    @field_validator('period')
-    @classmethod
-    def set_period(cls, v: month_ | week_, info: ValidationInfo) -> month_ | week_:
-        table_ = info.data.get('table')
-        if v is None:
-            return META.get(table_).get('period')
-        else:
-            return v
+    #TODO: Field validator for period before inner validation takes place which should assign period from META dict
 
 
     @model_validator(mode='before')
     @classmethod
-    def check_period_type(cls, data: Any) -> Any:
+    def populate_meta_model(cls, data: Any) -> Any:
         if isinstance(data, dict):
-            if 'table' in data:
-                data['new_cols'] = ['test']
-                return data
-
-
-
-    # @field_validator('period_type', 'period_def', 'period_sap', 'period_tech_name', 'new_cols')
-    # @classmethod
-    # def set_period_type(cls, v: Any, info: ValidationInfo) -> Any:
-    #     table_ = info.data.get('table')
-        # info.data['new_cols'] = Period.Type.year_month
-
-
-
-    # @field_validator('period_def')
-    # @classmethod
-    # def set_period_def(cls, v: Period.Def, info: ValidationInfo) -> Period.Def:
-    #     table_ = info.data.get('table')
-    #     if v:
-    #         raise ValueError('Period.Def could not be determined from the SQL_META_DATA dictionary')
-    #     return META.get(table_).get('period_def')
+            # TODO: Currently hard coded for testing
+            data['period_type'] = Period.Type.year_month
+            data['period_def'] = Period.Def.calendar
+            data['period_sap'] = Period.Sap.dot_interval
+            data['period_tech_name'] = ['S_FYPOPT']
+            data['new_cols'] = ['DATE', 'CUSTOMER', 'MATERIAL', 'QUANTITY', 'P3B_1', 'P3B', 'P5', 'MP']
+            return data
 
 
 
@@ -71,13 +56,12 @@ class Construct(Init):
 
 if __name__ == '__main__':
     try:
-        print(Init(table='actuals'))
+        print(
+            Init(
+                table='actuals',
+                # period=202010,
+            ).model_dump_json(indent=2)
+        )
+        # print(Init(table='actuals'))
     except ValidationError as e:
-        print(e)
-    # print(Init.model_validate(Init.construct()))
-    # print(
-    #     Init(
-    #         table='actuals',
-    #         # period=202010,
-    #     ).model_dump_json(indent=2)
-    # )
+        print(e.json(indent=2))

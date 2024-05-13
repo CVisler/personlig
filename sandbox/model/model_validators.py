@@ -27,7 +27,7 @@ def test_dot_month(v):
     if int(__str[:2]) not in range(1, 13):
         raise ValueError(f'{int(__str[-2:])} is not in the acceptable range of months')
     if int(__str[-4:]) not in range(2010, 2027):
-        raise ValueError(f'{int(__str[-2:])} is not in the acceptable range of months')
+        raise ValueError(f'{int(__str[-2:])} is not in the acceptable range of years')
     return v
 
 
@@ -38,7 +38,7 @@ def test_dot_week(v):
     if int(__str[:2]) not in range(1, 54):
         raise ValueError(f'{int(__str[-2:])} is not in the acceptable range of months')
     if int(__str[-4:]) not in range(2010, 2027):
-        raise ValueError(f'{int(__str[-2:])} is not in the acceptable range of months')
+        raise ValueError(f'{int(__str[-2:])} is not in the acceptable range of years')
     return v
 
 
