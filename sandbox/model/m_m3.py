@@ -63,7 +63,7 @@ class Init(BaseModel):
 
 
 
-    @field_validator('period')
+    @field_validator('period', mode='after')
     @classmethod
     def check_period(cls, v: Any, info: ValidationInfo) -> _period_:
         if info.data['period_type'] == Period.Type.year_month:
@@ -83,6 +83,9 @@ class Construct(Init):
     @field_validator('period_sap_entry')
     @classmethod
     def generate_prd_sap_entry(cls, v: Any, info: ValidationInfo) -> period_:
+        if not info.data.get('period', None):
+            raise ValueError('Period must be provided in order to generate SAP entry')
+
         period_sap_ = info.data['period_sap']
         period_sap_entry_final_ = info.data['period']
 
@@ -140,7 +143,7 @@ if __name__ == '__main__':
     try:
         c = Construct(
                 table='actuals',
-                period=202302, # TODO: Need to handle error in init if non iterable is passed so we can produce proper error
+                period=202332, # TODO: Need to handle error in init if non iterable is passed so we can produce proper error
             )
 
         print(c.model_dump_json(indent=2))
