@@ -10,12 +10,18 @@ from pydantic import (
 )
 import datetime
 
-from model_validators import month_, week_, month_dot, week_dot
+from model_validators import (
+    month_, week_,
+    month_dot, week_dot,
+    test_month, test_week,
+)
 from sony import calyear_fiscyear as _conv, dotyear as _dot, calyear_date as _date
 from metadata import SQL_META_DATA as META
 from enums import Period, SnordTable
 from typing import Dict, List, Any, Sequence, Annotated, TypeAlias
-period_: TypeAlias = Sequence[month_ | week_ | month_dot | week_dot]
+period_: TypeAlias = List[month_ | week_ | month_dot | week_dot]
+# _period_: TypeAlias = List[month_ | week_] #, BeforeValidator(lambda v: [v] if not isinstance(v, list) else v)]
+_period_ = Annotated[List[month_ | week_], BeforeValidator(lambda v: [v] if not isinstance(v, list) else v)]
 
 
 
@@ -28,21 +34,13 @@ class Init(BaseModel):
     model_config = ConfigDict(use_enum_values=True, validate_default=True)
 
     table: SnordTable | str
-    period: Annotated[List[month_ | week_], BeforeValidator(lambda v: [v] if not isinstance(v, list) else v)] | None = None # Convert user input to list if it isnt already
-    period_type: Period.Type | None = Field(default=None, exclude=True)
-    period_def: Period.Def | None = Field(default=None, exclude=True)
-    period_sap: Period.Sap | None = Field(default=None, exclude=True)
-    period_tech_name: List[str] | None = Field(default=None, exclude=True)
-    new_cols: List[str] | None =  Field(default=None, exclude=True)
-    technical_name: List[str] | None = Field(default=None, exclude=True)
-
-
-
-    @field_validator('period', mode='before')
-    @classmethod
-    def assign_period(cls, v: Any, info: ValidationInfo) -> List[month_ | week_]:
-        return META[info.data['table']]['period'] if not v else v
-
+    period_type: Period.Type | None = Field(default=None, exclude=True, repr=False) # Set period type first in order to determine how period should be validated, i.e. month or week
+    period: _period_ | None = None
+    period_def: Period.Def | None = Field(default=None, exclude=True, repr=False)
+    period_sap: Period.Sap | None = Field(default=None, exclude=True, repr=False)
+    period_tech_name: List[str] | None = Field(default=None, exclude=True, repr=False)
+    new_cols: List[str] | None =  Field(default=None, exclude=True, repr=False)
+    technical_name: List[str] | None = Field(default=None, exclude=True, repr=False)
 
 
     @model_validator(mode='before')
@@ -58,9 +56,28 @@ class Init(BaseModel):
 
 
 
+    @field_validator('period', mode='before')
+    @classmethod
+    def assign_period(cls, v: Any, info: ValidationInfo) -> Any: # No validators have run on period attr yet so it could be Any
+        return META[info.data['table']]['period'] if not v else v
+
+
+
+    @field_validator('period')
+    @classmethod
+    def check_period(cls, v: Any, info: ValidationInfo) -> _period_:
+        if info.data['period_type'] == Period.Type.year_month:
+            return [test_month(i) for i in v]
+        elif info.data['period_type'] == Period.Type.year_week:
+            return [test_week(i) for i in v]
+
+
+
 class Construct(Init):
-    period_sap_entry: period_ | None = None
-    period_iso: List[datetime.date] | None = None
+    model_config = ConfigDict(use_enum_values=True, validate_default=True)
+
+    period_sap_entry: period_ | None = Field(default=None, exclude=True, repr=False) 
+    # period_iso: List[datetime.date] | None = Field(default=None, exclude=True, repr=False) 
 
 
     @field_validator('period_sap_entry')
@@ -75,7 +92,9 @@ class Construct(Init):
             if info.data['period_def'] == Period.Def.fiscal:
                 period_sap_entry_final_ = _conv(info.data['period'])
             else:
-                period_sap_entry_final_ = [str(i) for i in info.data['period']]
+                period_sap_entry_final_ = [str(i) for i in info.data['period']] # Converting to string for below string manipulation
+        else:
+            period_sap_entry_final_ = [str(i) for i in info.data['period']] # If period is to be interpreted as week take period assigned
 
 
         if period_sap_ == Period.Sap.interval:
@@ -110,20 +129,23 @@ class Construct(Init):
 
 
 
-    @field_validator('period_iso')
-    @classmethod
-    def generate_prd_iso(cls, v: Any, info: ValidationInfo) -> List[datetime.date]:
-        return [datetime.datetime.strptime(d, "%Y-%m-%d").date() for d in _date(info.data['period'])]
+    # @field_validator('period_iso')
+    # @classmethod
+    # def generate_prd_iso(cls, v: Any, info: ValidationInfo) -> List[datetime.date]:
+    #     return [datetime.datetime.strptime(d, "%Y-%m-%d").date() for d in _date(info.data['period'])]
 
 
 
-# if __name__ == '__main__':
-#     try:
-#         print(
-#             Construct(
-#                 table='actuals',
-#                 # period=202010,
-#             ).model_dump_json(indent=2)
-#         )
-#     except ValidationError as e:
-#         print(e.json(indent=2))
+if __name__ == '__main__':
+    try:
+        c = Construct(
+                table='actuals',
+                period=202302, # TODO: Need to handle error in init if non iterable is passed so we can produce proper error
+            )
+
+        print(c.model_dump_json(indent=2))
+        # print(c)
+        # print(c.period_type)
+
+    except ValidationError as e:
+        print(e.json(indent=2))
