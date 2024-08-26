@@ -1,5 +1,4 @@
-# BRYLLUP 2024
----
+## BRYLLUP 2024
 
 Tak fordi i alle havde lyst til at komme og se os blive gift.
 
@@ -18,12 +17,14 @@ Til Barbara:
 Tak fordi du sagde ja! Jeg var jo ikke sikker på om du ville sige ja! Men jeg tog jo chancen.
 
 
-Sjove anekdoter:
-  Hvorfor elsker jeg dig/hvornår ved jeg at vi er et godt match:
-  - (( Lugter den her af tis? ))
-  - Når du uironisk tørrer en brødskorpe af i den næsten tomme smørbakke (forstår at nyde de små ting i livet)
-  - Bestod gulvpizza testen (ikke så fin på den)
-  - Siger jeg til at tage en måned til Mexico med en eller anden du lige har mødt (tillidsfuld)
-  - Mest af alt er det jo nok en mavefornemmelse.
+Sjove anekdoter: Hvorfor elsker jeg dig/hvornår ved jeg at vi er et godt match:
+(( Lugter den her af tis? ))
+Når du uironisk tørrer en brødskorpe af i den næsten tomme smørbakke (forstår at nyde de små ting i livet)
+Bestod gulvpizza testen (ikke så fin på den)
+Siger jeg til at tage en måned til Mexico med en eller anden du lige har mødt (tillidsfuld)
+Mest af alt er det jo nok en mavefornemmelse.
+
+Seriøse cute ting:
+ - 
 
 Alt det jeg prøver at sige med den her forvirrende tale er jo bare at jeg elsker dig meget højt!
