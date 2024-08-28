@@ -14,19 +14,23 @@ Oversigt:
    - Mavefornemmelse (solskin i maven)
  - Resten af livet
 
+Hvad vil jeg sige?: Barbara er en god mor, en varm, omsorgsfuld, kærlig, nærværrende person. Hun er også grineren (for det meste med vilje). Nysgerring på livet -> har ja-hatten på (når det ikke er fordi jeg har foreslået at købe en steam cleaner).
 
+Intro:
+---
 Tak fordi i alle havde lyst til at komme og se os blive gift.
 
 Så står jeg her og holder tale igen! Jeg skal nok sørge for at holde det kort.
 Først vil jeg lige sige tak til mine svigerforældre fordi i lægger hus til! (Det er virkelig nogle hyggelige omgivelser.)
 Og tak til dig, Barbara, fordi du har taget roret på planlægningen! Og task2ak fordi du sagde ja! Jeg var jo ikke sikker på om du ville sige ja! Men jeg tog jo chancen.
 
-Hvor er det dejligt at kunne stå her, og dele sådan en dejlig dag med alle jer flotte mennesker.
-Da jeg skrev den her tale, besluttede jeg mig for at jeg ville forsøge ikke at nævne drengene.. De er jo åbenlyst også en af de primære grunde til at jeg holder af dig (og til at du ikke kan slippe af med mig). **Jeg synes dog lige, at det bør nævnes at (noget med at jeg bliver varm indeni når jeg ser dig med dem, og hører hvordan du taler om dem)**
-Så prøvede jeg også at finde på alle mulige sjove, rørende og dybfølte måder at forklare hvor glad jeg er for dig, men i virkeligheden bør jeg jo nok bare holde det simpelt.
-Måske skulle jeg nøjes med at prøve at få dig til at græde.. Men så på den anden side; det gør du som regel kun når du ringer til banken eller når jeg skal møde dine forældre for første gang. Så det kan jeg jo godt glemme
 
-Hvad vil jeg sige?: Barbara er en god mor, en varm, omsorgsfuld, kærlig, nærværrende person. Hun er også grineren (for det meste med vilje). Nysgerring på livet -> har ja-hatten på (når det ikke er fordi jeg har foreslået at købe en steam cleaner).
+Sjove anekdoter:
+---
+Hvor er det dejligt at kunne stå her, og dele sådan en dejlig dag med alle jer flotte mennesker.
+Da jeg skrev den her tale, besluttede jeg mig for at jeg ville forsøge ikke at nævne drengene. Det var næsten som om det ville være for nemt, men de er jo åbenlyst en af de primære grunde til at jeg holder så meget af dig (og til at du ikke kan slippe af med mig). **Men jeg synes dog lige, at det bør nævnes at hvor dejligt og livsbekræftende det er at se dig sammen med dem; hvordan du er deres mor**
+Så prøvede jeg også at finde på alle mulige sjove, rørende og dybfølte måder at forklare hvor glad jeg er for dig, men så tænkte at jeg burde nøjes med at prøve at få dig til at græde.. Men så på den anden side; det gør du som regel kun når du ringer til banken eller når jeg skal møde dine forældre for første gang. Så det kan jeg jo godt glemme
+I virkeligheden bør jeg jo nok bare prøve at holde det simpelt.
 
 
 Hvorfor vi passer sammen?:
@@ -48,14 +52,14 @@ Så synes jeg at det siger noget om dig, at du gik med til at tage en måned til
 Det der med steam cleaneren.
 
 
+Resten af livet:
+---
+Glæder mig til resten af livet med dig og dem der (drengene).
+
+
 Seriøse cute ting:
 ---
  - Solskin i maven?
  - Noget med at tøjle hangriness
  - At, på trods af hvor lidt tid vi kan have sammen for tiden, og de klamme sider vi ser af hinanden, er vi stadigvæk ivrige efter at drømme sammen - både om ferier, men også om de små ting i livet vi glæder os til at kunne gøre sammen.
  - Alt det jeg prøver at sige med den her forvirrende tale er jo bare at jeg elsker dig meget højt!
-
-
-Resten af livet:
----
-Glæder mig til resten af livet med dig og dem der (drengene).
